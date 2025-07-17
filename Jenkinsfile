@@ -1,16 +1,19 @@
 pipeline {
     agent any
+
     environment {
-        DOCKER_IMAGE = 'yourdockerhubuser/flask-s3-app:${BUILD_NUMBER}'  // đổi thành Docker Hub của bạn
-        AWS_ACCESS_KEY_ID = credentials('AKIA2ELEWHODST3YCRSU')             // cấu hình trong Jenkins Credentials
-        AWS_SECRET_ACCESS_KEY = credentials('KyPmNYjusY94DAGlL58Ho7dFgDxTFTZD4b19QBBI')
-        S3_BUCKET_NAME = 'myflaskbucket2025'
+        DOCKER_IMAGE = 'flask-s3-app:${BUILD_NUMBER}'
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+        S3_BUCKET_NAME = 'ten-bucket-s3-cua-ban'
         S3_REGION = 'ap-northeast-1'
     }
 
     stages {
         stage('Clone source') {
-            steps { git 'https://github.com/yourrepo/your-flask-app.git' }
+            steps {
+                git 'https://github.com/your-repo/flask-s3-k8s-project.git'
+            }
         }
         stage('Build Docker image') {
             steps {
@@ -19,18 +22,8 @@ pipeline {
                 }
             }
         }
-        stage('Push Docker image') {
+        stage('Run/Restart container') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                        docker.image("${DOCKER_IMAGE}").push()
-                    }
-                }
-            }
-        }
-        stage('Deploy/Restart container') {
-            steps {
-                // Stop & remove old container, run container mới từ image vừa build
                 sh '''
                 docker stop flask-s3-app || true
                 docker rm flask-s3-app || true
