@@ -10,9 +10,9 @@ pipeline {
     }
 
     stages {
-        stage('Clone source') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/1sGu7/LAB9DTDM.git'
+                git branch: 'main', url: 'https://github.com/1sGu7/LAB9DTDM.git'
             }
         }
         stage('Debug Build Number') {
@@ -31,9 +31,9 @@ pipeline {
         stage('Run/Restart container') {
             steps {
                 sh '''
-                  docker stop flask-s3-app || true
-                  docker rm flask-s3-app || true
-                  docker run -d \
+                docker stop flask-s3-app || true
+                docker rm flask-s3-app || true
+                docker run -d \
                     --name flask-s3-app \
                     -p 5000:5000 \
                     -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
