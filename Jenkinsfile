@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = 'flask-s3-app:${BUILD_NUMBER}'
         AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
-        S3_BUCKET_NAME = 'ten-bucket-s3-cua-ban'
+        S3_BUCKET_NAME = 'myflaskbucket2025'
         S3_REGION = 'ap-northeast-1'
     }
 
