@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clone source') {
             steps {
-                git 'https://github.com/your-repo/flask-s3-k8s-project.git'
+                git 'https://github.com/1sGu7/LAB9DTDM.git'
             }
         }
         stage('Build Docker image') {
