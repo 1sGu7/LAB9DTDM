@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Clone source') {
             steps {
-                git 'https://github.com/1sGu7/LAB9DTDM.git'
+                git branch: 'main', url: 'https://github.com/1sGu7/LAB9DTDM.git'
             }
         }
         stage('Build Docker image') {
