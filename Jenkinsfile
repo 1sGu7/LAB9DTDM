@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'flask-s3-app:${BUILD_NUMBER}'
+        DOCKER_IMAGE = "flask-s3-app:${env.BUILD_NUMBER}"
         AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
         S3_BUCKET_NAME = 'myflaskbucket2025'
@@ -12,7 +12,13 @@ pipeline {
     stages {
         stage('Clone source') {
             steps {
-                git branch: 'main', url: 'https://github.com/1sGu7/LAB9DTDM.git'
+                git 'https://github.com/1sGu7/LAB9DTDM.git'
+            }
+        }
+        stage('Debug Build Number') {
+            steps {
+                echo "Build number is: ${env.BUILD_NUMBER}"
+                echo "Docker image will be: ${DOCKER_IMAGE}"
             }
         }
         stage('Build Docker image') {
@@ -25,20 +31,21 @@ pipeline {
         stage('Run/Restart container') {
             steps {
                 sh '''
-                docker stop flask-s3-app || true
-                docker rm flask-s3-app || true
-                docker run -d \
-                  --name flask-s3-app \
-                  -p 5000:5000 \
-                  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-                  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-                  -e S3_BUCKET_NAME=$S3_BUCKET_NAME \
-                  -e S3_REGION=$S3_REGION \
-                  ${DOCKER_IMAGE}
+                  docker stop flask-s3-app || true
+                  docker rm flask-s3-app || true
+                  docker run -d \
+                    --name flask-s3-app \
+                    -p 5000:5000 \
+                    -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+                    -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+                    -e S3_BUCKET_NAME=$S3_BUCKET_NAME \
+                    -e S3_REGION=$S3_REGION \
+                    ${DOCKER_IMAGE}
                 '''
             }
         }
     }
+
     post {
         always {
             cleanWs()
